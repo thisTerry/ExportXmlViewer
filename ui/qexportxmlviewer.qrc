@@ -1,0 +1,13 @@
+<RCC>
+    <qresource prefix="/exportxmlviewer">
+        <file>app.png</file>
+        <file>open.png</file>
+        <file>information.png</file>
+        <file>settings.png</file>
+        <file>help.png</file>
+        <file>parameters.png</file>
+        <file>waveforms.png</file>
+        <file>medianbeattemplates.png</file>
+        <file>patient.png</file>
+    </qresource>
+</RCC>
