@@ -2,7 +2,7 @@
 
 ; Define your application name
 !define APPNAME "ExportXmlViewer"
-!define APPNAMEANDVERSION "ExportXmlViewer 0.4"
+!define APPNAMEANDVERSION "ExportXmlViewer"
 
 ; Main Install settings
 Name "${APPNAMEANDVERSION}"

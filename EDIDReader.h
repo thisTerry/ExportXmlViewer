@@ -1,8 +1,9 @@
-#ifndef EDIDREADER_H
+ï»¿#ifndef EDIDREADER_H
 #define EDIDREADER_H
 
 #include <QObject>
 #include <QStringList>
+#include <QVariantList>
 
 class EDIDReader : public QObject
 {
@@ -29,14 +30,16 @@ private:
     void ParseActiveDisplayInfo(unsigned char * edid);
 
 private:
-    QVariantList m_activeDisplayEDIDList;//ËùÓĞ»î¶¯ÆÁÄ»µÄEDIDĞÅÏ¢
+    QVariantList m_activeDisplayEDIDList;//æ‰€æœ‰æ´»åŠ¨å±å¹•çš„EDIDä¿¡æ¯
 
-    //µ±ÓĞ¶à¸öÆÁÄ»Ê±£¬Ö»È¡Ò»¸ö»î¶¯µÄÆÁ±Î
+    //å½“æœ‰å¤šä¸ªå±å¹•æ—¶ï¼Œåªå–ä¸€ä¸ªæ´»åŠ¨çš„å±è”½
     QString m_manufactureName;
     int m_screenWidthCM;
     int m_screenHeightCM;
     int m_screenWidthPixels;
     int m_screenHeightCMPixels;
+
+    int m_srceenCount;
 };
 
 #endif // EDIDREADER_H

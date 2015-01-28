@@ -33,6 +33,7 @@ void QExportXmlParser::Clear()
 		delete m_patientPtr;
 		m_patientPtr = NULL;
 	}
+	m_unknownTags.clear();
 }
 
 template <typename T> void QExportXmlParser::Clear(QVector<T*> & vecItems)
@@ -131,6 +132,13 @@ bool QExportXmlParser::ParseFile(const QString & strFileFullPath, QString & erro
 		m_patientPtr = new STUPatient;
 		ParsePatientNode(nodeList.at(0), m_patientPtr);
 	}
+
+	if (!m_unknownTags.isEmpty())
+	{
+		errorMsg = tr("Unknown Tags: %1").arg(m_unknownTags);
+		return false;
+	}
+
 	return true;
 }
 
@@ -140,18 +148,18 @@ bool QExportXmlParser::ParseWaveformNode(const QDomNode& waveformNode, STUWavefo
 	if (NULL != pWaveForm)
 	{
 		QDomElement e = waveformNode.toElement();
-		if (!e.isNull() && SameString(e.tagName(), TAGNAME_WAVEFROM))
+		if (!e.isNull() && IsEqual(e.tagName(), TAGNAME_WAVEFROM))
 		{
 			pWaveForm->m_type = e.attribute(TAGNAME_TYPE);
 			pWaveForm->m_units = e.attribute(TAGNAME_UNITS);
 			QDomNode n = e.firstChild();
 			while (!n.isNull())
 			{
-				if (SameString(n.toElement().tagName(), TAGNAME_FILTERS))
+				if (IsEqual(n.toElement().tagName(), TAGNAME_FILTERS))
 				{
 					ParseFiltersNode(n, &pWaveForm->m_filters);
 				}
-				else if (SameString(n.toElement().tagName(), TAGNAME_WAVEFORMSEGMENT))
+				else if (IsEqual(n.toElement().tagName(), TAGNAME_WAVEFORMSEGMENT))
 				{
 					STUWaveformSegment* pSeg = new STUWaveformSegment;
 					ParseWaveformSegmentNode(n, pSeg);
@@ -159,8 +167,8 @@ bool QExportXmlParser::ParseWaveformNode(const QDomNode& waveformNode, STUWavefo
 				}
 				else
 				{
-					//新增元素,请处理
-					Q_ASSERT(false);
+					//新元素
+					UnknownNodeFilter(n);
 				}
 				n = n.nextSibling();
 			}
@@ -185,26 +193,27 @@ bool QExportXmlParser::ParseFiltersNode(const QDomNode& filterNode, STUFilters* 
 	if (NULL != pFilters)
 	{
 		QDomElement e = filterNode.toElement();
-		if (!e.isNull() && SameString(e.tagName(), TAGNAME_FILTERS))
+		if (!e.isNull() && IsEqual(e.tagName(), TAGNAME_FILTERS))
 		{
 			QDomNode n = e.firstChild();
 			while(!n.isNull())
 			{
-				if (SameString(n.toElement().tagName(), TAGNAME_HIGHPASS))
+				if (IsEqual(n.toElement().tagName(), TAGNAME_HIGHPASS))
 				{
 					pFilters->m_highPass = n.toElement().text();
 				}
-				else if (SameString(n.toElement().tagName(), TAGNAME_LOWPASS))
+				else if (IsEqual(n.toElement().tagName(), TAGNAME_LOWPASS))
 				{
 					pFilters->m_lowPass = n.toElement().text();
 				}
-				else if (SameString(n.toElement().tagName(), TAGNAME_BASELINEDRIFTREMOVAL))
+				else if (IsEqual(n.toElement().tagName(), TAGNAME_BASELINEDRIFTREMOVAL))
 				{
 					pFilters->m_baselineDriftRemoval = n.toElement().text();
 				}
 				else
 				{
-					Q_ASSERT(false);
+					//新元素
+					UnknownNodeFilter(n);
 				}
 				n = n.nextSibling();
 			}
@@ -230,25 +239,25 @@ bool QExportXmlParser::ParseWaveformSegmentNode(const QDomNode& waveformSegNode,
 	if (NULL != pSeg)
 	{
 		QDomElement e = waveformSegNode.toElement();
-		if (!e.isNull() && SameString(e.tagName(), TAGNAME_WAVEFORMSEGMENT))
+		if (!e.isNull() && IsEqual(e.tagName(), TAGNAME_WAVEFORMSEGMENT))
 		{
 			pSeg->m_time = e.attribute(TAGNAME_TIME);
 			QDomNode n = waveformSegNode.firstChild();
 			while (!n.isNull())
 			{
-				if (SameString(n.toElement().tagName(), TAGNAME_SAMPLERATE))
+				if (IsEqual(n.toElement().tagName(), TAGNAME_SAMPLERATE))
 				{
 					pSeg->m_sampleRate = n.toElement().text();
 				}
-				else if (SameString(n.toElement().tagName(), TAGNAME_DATARESOLUTION))
+				else if (IsEqual(n.toElement().tagName(), TAGNAME_DATARESOLUTION))
 				{
 					pSeg->m_dataResolation = n.toElement().text();
 				}
-				else if (SameString(n.toElement().tagName(), TAGNAME_DATA))
+				else if (IsEqual(n.toElement().tagName(), TAGNAME_DATA))
 				{
 					pSeg->m_data = n.toElement().text();
 				}
-				else if (SameString(n.toElement().tagName(), TAGNAME_ANNOTATION))
+				else if (IsEqual(n.toElement().tagName(), TAGNAME_ANNOTATION))
 				{
 					STUAnnotation* pAnnotation = new STUAnnotation;
 					ParseAnnotationNode(n, pAnnotation);
@@ -257,7 +266,7 @@ bool QExportXmlParser::ParseWaveformSegmentNode(const QDomNode& waveformSegNode,
 				else
 				{
 					//新元素
-					Q_ASSERT(false);
+					UnknownNodeFilter(n);
 				}
 				n = n.nextSibling();
 			}
@@ -282,20 +291,20 @@ bool QExportXmlParser::ParseAnnotationNode(const QDomNode& annotationNode, STUAn
 	if (NULL != pAnnotation)
 	{
 		QDomElement e = annotationNode.toElement();
-		if (!e.isNull() && SameString(e.tagName(), TAGNAME_ANNOTATION))
+		if (!e.isNull() && IsEqual(e.tagName(), TAGNAME_ANNOTATION))
 		{
 			pAnnotation->m_type = e.attribute(TAGNAME_TYPE);
 			QDomNode n = annotationNode.firstChild();
 			while (!n.isNull())
 			{
-				if (SameString(n.toElement().tagName(), TAGNAME_SAMPLE))
+				if (IsEqual(n.toElement().tagName(), TAGNAME_SAMPLE))
 				{
 					pAnnotation->m_offset = n.toElement().attribute(TAGNAME_OFFSET);
 				}
 				else
 				{
 					//新元素
-					Q_ASSERT(false);
+					UnknownNodeFilter(n);
 				}
 				n = n.nextSibling();
 			}
@@ -320,7 +329,7 @@ bool QExportXmlParser::ParseObservationNode(const QDomNode& observationNode, STU
 	if (NULL != pObservation)
 	{
 		QDomElement e = observationNode.toElement();
-		if (!e.isNull() && SameString(e.tagName(), TAGNAME_OBSERVATION))
+		if (!e.isNull() && IsEqual(e.tagName(), TAGNAME_OBSERVATION))
 		{
 			pObservation->m_type = e.attribute(TAGNAME_TYPE);
 			pObservation->m_channel = e.attribute(TAGNAME_CHANNEL);
@@ -334,7 +343,7 @@ bool QExportXmlParser::ParseObservationNode(const QDomNode& observationNode, STU
 				pObservation->m_value = e.toElement().text();
 			}
 		}
-		else if (!e.isNull() && SameString(e.tagName(), TAGNAME_QTCFORMULA))
+		else if (!e.isNull() && IsEqual(e.tagName(), TAGNAME_QTCFORMULA))
 		{
 			pObservation->m_type = TAGNAME_QTCFORMULA;
 			QDomNode n = observationNode.firstChild();
@@ -364,43 +373,43 @@ bool QExportXmlParser::ParsePatientNode(const QDomNode& patientNode, STUPatient*
 	if (NULL != pPatient)
 	{
 		QDomElement e = patientNode.toElement();
-		if (!e.isNull() && SameString(e.tagName(), TAGNAME_PATIENT))
+		if (!e.isNull() && IsEqual(e.tagName(), TAGNAME_PATIENT))
 		{
 			QDomNode n = patientNode.firstChild();
 			while (!n.isNull())
 			{
-				if (SameString(n.toElement().tagName(), TAGNAME_DEMOGRAPHICS))
+				if (IsEqual(n.toElement().tagName(), TAGNAME_DEMOGRAPHICS))
 				{
 					ParseDemographicsNode(n, pPatient->m_demographics);
 				}
-				else if (SameString(n.toElement().tagName(), TAGNAME_ASSIGNEDLOCATION))
+				else if (IsEqual(n.toElement().tagName(), TAGNAME_ASSIGNEDLOCATION))
 				{
 					ParseAssignedLocationNode(n, pPatient->m_assignedLocation);
 				}
-				else if (SameString(n.toElement().tagName(), TAGNAME_DOCTOR))
+				else if (IsEqual(n.toElement().tagName(), TAGNAME_DOCTOR))
 				{
 					ParseDoctorNode(n, pPatient->m_doctor);
 				}
-				else if (SameString(n.toElement().tagName(), TAGNAME_TECHNICIAN))
+				else if (IsEqual(n.toElement().tagName(), TAGNAME_TECHNICIAN))
 				{
 					ParseTechnicianNode(n, pPatient->m_technician);
 				}
-				else if (SameString(n.toElement().tagName(), TAGNAME_PACED))
+				else if (IsEqual(n.toElement().tagName(), TAGNAME_PACED))
 				{
 					pPatient->m_paced = n.toElement().text();
 				}
-				else if (SameString(n.toElement().tagName(), TAGNAME_MEDICATIONS))
+				else if (IsEqual(n.toElement().tagName(), TAGNAME_MEDICATIONS))
 				{
 					ParseMedicationsNode(n, pPatient->m_medications);
 				}
-				else if (SameString(n.toElement().tagName(), TAGNAME_CLINICALCLASSIFICATIONS))
+				else if (IsEqual(n.toElement().tagName(), TAGNAME_CLINICALCLASSIFICATIONS))
 				{
 					ParseClinicalClassificationsNode(n, pPatient->m_clinicalClassfications);
 				}
 				else
 				{
-					//新元素,UNSOPPORT
-					Q_ASSERT(false);
+					//新元素
+					UnknownNodeFilter(n);
 				}
 				n = n.nextSibling();
 			}
@@ -418,43 +427,43 @@ bool QExportXmlParser::ParseDemographicsNode(const QDomNode& demographicsNode, S
 {
 	bool bRet = true;
 	QDomElement e = demographicsNode.toElement();
-	if (!e.isNull() && SameString(e.tagName(), TAGNAME_DEMOGRAPHICS))
+	if (!e.isNull() && IsEqual(e.tagName(), TAGNAME_DEMOGRAPHICS))
 	{
 		QDomNode n = demographicsNode.firstChild();
 		while (!n.isNull())
 		{
-			if (SameString(n.toElement().tagName(), TAGNAME_FIRSTNAME))
+			if (IsEqual(n.toElement().tagName(), TAGNAME_FIRSTNAME))
 			{
 				demographics.m_firstName = n.toElement().text();
 			}
-			else if (SameString(n.toElement().tagName(), TAGNAME_LASTNAME))
+			else if (IsEqual(n.toElement().tagName(), TAGNAME_LASTNAME))
 			{
 				demographics.m_lastName = n.toElement().text();
 			}
-			else if (SameString(n.toElement().tagName(), TAGNAME_PATIENTID))
+			else if (IsEqual(n.toElement().tagName(), TAGNAME_PATIENTID))
 			{
 				demographics.m_patientID = n.toElement().text();
 			}
-			else if (SameString(n.toElement().tagName(), TAGNAME_DATEOFBIRTH))
+			else if (IsEqual(n.toElement().tagName(), TAGNAME_DATEOFBIRTH))
 			{
 				demographics.m_dateOfBirth = n.toElement().text();
 			}
-			else if (SameString(n.toElement().tagName(), TAGNAME_AGE))
+			else if (IsEqual(n.toElement().tagName(), TAGNAME_AGE))
 			{
 				demographics.m_age = n.toElement().text();
 			}
-			else if (SameString(n.toElement().tagName(), TAGNAME_GENDER))
+			else if (IsEqual(n.toElement().tagName(), TAGNAME_GENDER))
 			{
 				demographics.m_gender = n.toElement().text();
 			}
-			else if (SameString(n.toElement().tagName(), TAGNAME_RACE))
+			else if (IsEqual(n.toElement().tagName(), TAGNAME_RACE))
 			{
 				demographics.m_race = n.toElement().text();
 			}
 			else
 			{
 				//新元素
-				Q_ASSERT(false);
+				UnknownNodeFilter(n);
 			}
 			n = n.nextSibling();
 		}
@@ -471,31 +480,31 @@ bool QExportXmlParser::ParseAssignedLocationNode(const QDomNode& assignedLocatio
 {
 	bool bRet = true;
 	QDomElement e = assignedLocationNode.toElement();
-	if (!e.isNull() && SameString(e.tagName(), TAGNAME_ASSIGNEDLOCATION))
+	if (!e.isNull() && IsEqual(e.tagName(), TAGNAME_ASSIGNEDLOCATION))
 	{
 		QDomNode n = assignedLocationNode.firstChild();
 		while (!n.isNull())
 		{
-			if (SameString(n.toElement().tagName(), TAGNAME_BED))
+			if (IsEqual(n.toElement().tagName(), TAGNAME_BED))
 			{
 				assignedLocation.m_bed = n.toElement().text();
 			}
-			else if (SameString(n.toElement().tagName(), TAGNAME_ROOM))
+			else if (IsEqual(n.toElement().tagName(), TAGNAME_ROOM))
 			{
 				assignedLocation.m_room = n.toElement().text();
 			}
-			else if (SameString(n.toElement().tagName(), TAGNAME_POINTOFCARE))
+			else if (IsEqual(n.toElement().tagName(), TAGNAME_POINTOFCARE))
 			{
 				assignedLocation.m_pointOfCare = n.toElement().text();
 			}
-			else if (SameString(n.toElement().tagName(), TAGNAME_FACILITY))
+			else if (IsEqual(n.toElement().tagName(), TAGNAME_FACILITY))
 			{
 				assignedLocation.m_facility = n.toElement().text();
 			}
 			else
 			{
 				//新元素
-				Q_ASSERT(false);
+				UnknownNodeFilter(n);
 			}
 			n = n.nextSibling();
 		}
@@ -512,19 +521,19 @@ bool QExportXmlParser::ParseDoctorNode(const QDomNode& doctorNode, STUDoctor& do
 {
 	bool bRet = true;
 	QDomElement e = doctorNode.toElement();
-	if (!e.isNull() && SameString(e.tagName(), TAGNAME_DOCTOR))
+	if (!e.isNull() && IsEqual(e.tagName(), TAGNAME_DOCTOR))
 	{
 		QDomNode n = doctorNode.firstChild();
 		while (!n.isNull())
 		{
-			if (SameString(n.toElement().tagName(), TAGNAME_NAME))
+			if (IsEqual(n.toElement().tagName(), TAGNAME_NAME))
 			{
 				doctor.m_name = n.toElement().text();
 			}
 			else
 			{
 				//新元素
-				Q_ASSERT(false);
+				UnknownNodeFilter(n);
 			}
 			n = n.nextSibling();
 		}
@@ -541,19 +550,19 @@ bool QExportXmlParser::ParseTechnicianNode(const QDomNode& technicianNode, STUTe
 {
 	bool bRet = true;
 	QDomElement e = technicianNode.toElement();
-	if (!e.isNull() && SameString(e.tagName(), TAGNAME_TECHNICIAN))
+	if (!e.isNull() && IsEqual(e.tagName(), TAGNAME_TECHNICIAN))
 	{
 		QDomNode n = technicianNode.firstChild();
 		while (!n.isNull())
 		{
-			if (SameString(n.toElement().tagName(), TAGNAME_NAME))
+			if (IsEqual(n.toElement().tagName(), TAGNAME_NAME))
 			{
 				technician.m_name = n.toElement().text();
 			}
 			else
 			{
 				//新元素
-				Q_ASSERT(false);
+				UnknownNodeFilter(n);
 			}
 			n = n.nextSibling();
 		}
@@ -570,19 +579,19 @@ bool QExportXmlParser::ParseMedicationsNode(const QDomNode& medicationsNode, STU
 {
 	bool bRet = true;
 	QDomElement e = medicationsNode.toElement();
-	if (!e.isNull() && SameString(e.tagName(), TAGNAME_MEDICATIONS))
+	if (!e.isNull() && IsEqual(e.tagName(), TAGNAME_MEDICATIONS))
 	{
 		QDomNode n = medicationsNode.firstChild();
 		while (!n.isNull())
 		{
-			if (SameString(n.toElement().tagName(), TAGNAME_MEDICATION))
+			if (IsEqual(n.toElement().tagName(), TAGNAME_MEDICATION))
 			{
 				medications.m_name.append(n.toElement().attribute(TAGNAME_NAME));
 			}
 			else
 			{
 				//新元素
-				Q_ASSERT(false);
+				UnknownNodeFilter(n);
 			}
 			n = n.nextSibling();
 		}
@@ -599,19 +608,19 @@ bool QExportXmlParser::ParseClinicalClassificationsNode(const QDomNode& clinical
 {
 	bool bRet = true;
 	QDomElement e = clinicalClassificationsNode.toElement();
-	if (!e.isNull() && SameString(e.tagName(), TAGNAME_CLINICALCLASSIFICATIONS))
+	if (!e.isNull() && IsEqual(e.tagName(), TAGNAME_CLINICALCLASSIFICATIONS))
 	{
 		QDomNode n = clinicalClassificationsNode.firstChild();
 		while (!n.isNull())
 		{
-			if (SameString(n.toElement().tagName(), TAGNAME_CLINICALCLASSIFICATION))
+			if (IsEqual(n.toElement().tagName(), TAGNAME_CLINICALCLASSIFICATION))
 			{
 				clinicalClassifications.m_classifications.append(n.toElement().text());
 			}
 			else
 			{
 				//新元素
-				Q_ASSERT(false);
+				UnknownNodeFilter(n);
 			}
 			n = n.nextSibling();
 		}
@@ -624,7 +633,21 @@ bool QExportXmlParser::ParseClinicalClassificationsNode(const QDomNode& clinical
 	return bRet;
 }
 
-bool QExportXmlParser::SameString(const QString& l, const QString& r, Qt::CaseSensitivity cs)
+void QExportXmlParser::UnknownNodeFilter(const QDomNode& n)
+{	
+	QString tagName = n.toElement().tagName();
+	if (tagName.isEmpty())
+	{
+		//应该是XML注释节点。忽略
+	}
+	else
+	{
+		Q_ASSERT(false);
+		m_unknownTags += tr("%1; ").arg(tagName);
+	}
+}
+
+bool QExportXmlParser::IsEqual(const QString& l, const QString& r, Qt::CaseSensitivity cs)
 {
 	return 0==l.compare(r, cs);
 }

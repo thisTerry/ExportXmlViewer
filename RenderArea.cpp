@@ -113,7 +113,7 @@ namespace psimpl
 	}
 
 	/*!
-	    设置波形数据的分辨率。、
+	    设置波形数据的分辨率。
 		用于绘制波形标尺文字。即实际单位下的波形采样值=（波形数据*分辨率）。
 	    @para[in]  const QString & strResolution  
 	    @return  void
@@ -426,7 +426,7 @@ namespace psimpl
 			QVariant vVal;
 			//波形走速
 			CFGMgr::Instance()->GetConfig(ID_WAVE_SPEED, vVal);
-			strWaveSpeed = QString(tr("  WaveSpeed: %d mm/s")).arg(vVal.toInt());
+			strWaveSpeed = QString(tr("  WaveSpeed: %1 mm/s")).arg(vVal.toInt());
 			
 			//标尺
 			CFGMgr::Instance()->GetConfig(ID_RENDER_WAVE_SCALE_TEXT, vVal);

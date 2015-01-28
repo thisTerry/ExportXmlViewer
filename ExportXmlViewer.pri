@@ -36,3 +36,8 @@ FORMS += ./ui/qexportxmlviewer.ui \
     ./ui/qwaveinfodlg.ui \
     ./ui/qdisplaysettingdlg.ui
 RESOURCES += ui/qexportxmlviewer.qrc
+win32{
+    HEADERS += ./edidreader.h
+    SOURCES += ./edidreader.cpp
+    RC_FILE = ui/exportxmlviewer.rc
+}

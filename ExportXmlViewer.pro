@@ -17,4 +17,3 @@ OBJECTS_DIR += debug
 UI_DIR += ./GeneratedFiles
 RCC_DIR += ./GeneratedFiles
 include(ExportXmlViewer.pri)
-win32:RC_FILE = ui/exportxmlviewer.rc

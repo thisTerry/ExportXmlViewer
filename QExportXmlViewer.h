@@ -4,8 +4,6 @@
 #include <QtWidgets/QMainWindow>
 #include "ui_qexportxmlviewer.h"
 
-struct STUWaveform;
-struct STUAnnotation;
 class QExportXmlParser;
 class CFGMgr;
 class QAction;
@@ -53,8 +51,6 @@ private:
 
 private:
     void UpdateDisplayPixelsPerCM();
-	qreal GetHorizontalPixelsPerCentimeter();
-	qreal GetVerticalPixelsPerCentimeter();
 
 private:
     QExportXmlParser*            m_parserPtr;//12导 XML 解析器

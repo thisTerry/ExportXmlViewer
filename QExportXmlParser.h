@@ -59,13 +59,17 @@ private:
 	void Init();
 	void Clear();
 	template <typename T> void Clear(QVector<T*> & vecItems);
-	bool SameString(const QString& l, const QString& r, Qt::CaseSensitivity cs=Qt::CaseInsensitive);
+	bool IsEqual(const QString& l, const QString& r, Qt::CaseSensitivity cs=Qt::CaseInsensitive);
+	void UnknownNodeFilter(const QDomNode& n);
 
 private:
 	QVector<STUWaveform*> m_waveforms;
 	QVector<STUWaveform*> m_medianBeatTemp;
 	QVector<STUObservation*> m_observations;
 	struct STUPatient* m_patientPtr;
+	
+private:
+	QString m_unknownTags;
 
 private:
 	Q_DISABLE_COPY(QExportXmlParser);

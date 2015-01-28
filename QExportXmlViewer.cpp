@@ -13,7 +13,9 @@
 #include "qwaveswidget.h"
 #include "QParameterListWidget.h"
 #include "qpatientinfowidget.h"
+#ifdef Q_OS_WIN
 #include "edidreader.h"
+#endif
 
 using namespace psimpl;
 
@@ -181,7 +183,7 @@ void QExportXmlViewer::OnOpenClicked()
 		if (!bSuccess)
 		{
 			HideAllWidget();
-			OnWarningInformation(QString(tr("Parse XML file failed: %1").arg(errorMsg)));
+			OnWarningInformation(QString(tr("Parse XML file errorMsg: %1").arg(errorMsg)));
 			return;
 		}
 
@@ -213,8 +215,8 @@ void QExportXmlViewer::OnQuitClicked()
 void QExportXmlViewer::OnAboutClicked()
 {
 	QMessageBox::about(this, tr("About ExportXmlViewer"),
-		tr("<h2>ExportXmlViewer 0.5.0</h2>"
-		"<p>Copyright &copy; 2013-2014 Mindray."
+		tr("<h2>ExportXmlViewer 0.5.1</h2>"
+		"<p>Copyright &copy; 2013-2015 Mindray."
 		"<p>ExportXmlViewer is a small application that view XML files export by Central Monitoring System."
 		"<p><h3>usage:</h3> "
 		"<ul>"
@@ -508,30 +510,30 @@ void QExportXmlViewer::UpdateDisplayPixelsPerCM()
         horDotsPerCM = 10.0 * reader.GetScreenWidth() / reader.GetScreenWidthMM();
         verDotsPerCM = 10.0 * reader.GetScreenHeight() / reader.GetScreenHeightMM();
 
+        QString msgBoxTitle = tr("Display Information");
+        QString msgBoxText;
+
         if (reader.HasMultiScreen())
         {
-            QMessageBox msgBox(QMessageBox::Information, "Display Information",
-                QString("This computer has multi-screen. For 1mV ECG wave draw 1cm.\n Please use this display:\n\n\tManufacture: %1\n\tSceen size: %2mm * %3mm\n\tResolution: %4 * %5")
+            msgBoxText = QString("This computer has multi-screen. For 1mV ECG wave draw 1cm.\n Please use this display:\n\n\tManufacture: %1\n\tSceen size: %2mm * %3mm\n\tResolution: %4 * %5")
                 .arg(strManufacture)
                 .arg(reader.GetScreenWidthMM())
                 .arg(reader.GetScreenHeightMM())
                 .arg(reader.GetScreenWidth())
-                .arg(reader.GetScreenHeight()),
-                QMessageBox::Ok, this);
-            msgBox.exec();
+                .arg(reader.GetScreenHeight());
         }
         else
         {
-            QMessageBox msgBox(QMessageBox::Information, "Display Information",
-                QString("This PC has only one screen. Display information:\n\n\tManufacture: %1\n\tSceen size: %2mm * %3mm\n\tResolution: %4 * %5")
+            msgBoxText = QString("This PC has only one screen. Display information:\n\n\tManufacture: %1\n\tSceen size: %2mm * %3mm\n\tResolution: %4 * %5")
                 .arg(strManufacture)
                 .arg(reader.GetScreenWidthMM())
                 .arg(reader.GetScreenHeightMM())
                 .arg(reader.GetScreenWidth())
-                .arg(reader.GetScreenHeight()),
-                QMessageBox::Ok, this);
-            msgBox.exec();
+                .arg(reader.GetScreenHeight());
         }
+
+        QMessageBox msgBox(QMessageBox::Information, msgBoxTitle, msgBoxText, QMessageBox::Ok, this);
+        msgBox.exec();
     }
 #else
 	horDotsPerCM = width();
