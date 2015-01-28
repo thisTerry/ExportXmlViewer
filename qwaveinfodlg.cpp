@@ -42,7 +42,7 @@ void QWaveInfoDlg::OnInitDialog()
 	ui.tableWidget->setEditTriggers(QAbstractItemView::NoEditTriggers);//禁止编辑
 	ui.tableWidget->setSelectionBehavior(QAbstractItemView::SelectRows);//一次选中一行
 	ui.tableWidget->setSelectionMode(QAbstractItemView::ExtendedSelection);//可以拖动区域，选中多行
-	ui.tableWidget->horizontalHeader()->setResizeMode(QHeaderView::Stretch);
+	ui.tableWidget->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
 
 	//列标题
 	if (ui.tableWidget->columnCount() < 2)

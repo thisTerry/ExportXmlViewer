@@ -1,7 +1,7 @@
 ﻿#ifndef EXPORTXMLSHOW_H
 #define EXPORTXMLSHOW_H
 
-#include <QtGui/QMainWindow>
+#include <QtWidgets/QMainWindow>
 #include "ui_qexportxmlviewer.h"
 
 struct STUWaveform;
@@ -23,7 +23,7 @@ class QExportXmlViewer : public QMainWindow
 	Q_OBJECT
 
 public:
-	QExportXmlViewer(QWidget *parent = 0, Qt::WFlags flags = 0);
+	QExportXmlViewer(QWidget *parent = 0);
 	~QExportXmlViewer();
 
 	void OnInitDialog();
@@ -52,6 +52,7 @@ private:
 	void RepaintWave();
 
 private:
+    void UpdateDisplayPixelsPerCM();
 	qreal GetHorizontalPixelsPerCentimeter();
 	qreal GetVerticalPixelsPerCentimeter();
 

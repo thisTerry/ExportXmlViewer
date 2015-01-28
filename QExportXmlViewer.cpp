@@ -1,5 +1,5 @@
 ﻿#include "QExportXmlViewer.h"
-#include <QtGui/QMenuBar>
+#include <QtWidgets/QMenuBar>
 #include <QActionGroup>
 #include <QMessageBox>
 #include <QFileDialog>
@@ -13,6 +13,7 @@
 #include "qwaveswidget.h"
 #include "QParameterListWidget.h"
 #include "qpatientinfowidget.h"
+#include "edidreader.h"
 
 using namespace psimpl;
 
@@ -26,8 +27,8 @@ static const QString MEDIANBEATTEMPLATES_INFORMATION = QString("MedianBeatTempla
     @para[in]  Qt::WFlags flags  
     @return  
 */
-QExportXmlViewer::QExportXmlViewer(QWidget *parent, Qt::WFlags flags)
-	: QMainWindow(parent, flags)
+QExportXmlViewer::QExportXmlViewer(QWidget *parent)
+	: QMainWindow(parent)
 	, m_parserPtr(NULL)
 	, m_infoLabelPtr(NULL)
 	, m_wavesWidgetPtr(NULL)
@@ -38,8 +39,7 @@ QExportXmlViewer::QExportXmlViewer(QWidget *parent, Qt::WFlags flags)
 	ui.setupUi(this);
 
 	//更新配置值,需要放在InitDialog的前面
-	m_pCfgMgr->UpdateConfig(ID_HOR_PIXELS_PER_CM, GetHorizontalPixelsPerCentimeter());
-	m_pCfgMgr->UpdateConfig(ID_VER_PIXELS_PER_CM, GetVerticalPixelsPerCentimeter());
+    UpdateDisplayPixelsPerCM();
 
 	OnInitDialog();
 }
@@ -480,26 +480,68 @@ void QExportXmlViewer::RepaintWave()
 	}
 }
 
-
 /*!
-    返回：水平方向多少像素1个厘米
-    @return  QT_NAMESPACE::qreal
+    更新配置值,需要放在InitDialog的前面
 */
-qreal QExportXmlViewer::GetHorizontalPixelsPerCentimeter()
+void QExportXmlViewer::UpdateDisplayPixelsPerCM()
 {
-	qreal dotsPerCM = width();
-	dotsPerCM = 10.0 * dotsPerCM / widthMM();
-	return dotsPerCM;
-}
+    qreal horDotsPerCM = 44;
+    qreal verDotsPerCM = 44;
 
+#ifdef Q_OS_WIN
+    EDIDReader reader;
+    QString strManufacture = reader.GetManufactureName();
+    horDotsPerCM = 10.0 * reader.GetScreenWidth() / reader.GetScreenWidthMM();
+    verDotsPerCM = 10.0 * reader.GetScreenHeight() / reader.GetScreenHeightMM();
 
-/*!
-    返回：竖直方向多少像素1个厘米
-    @return  QT_NAMESPACE::qreal
-*/
-qreal QExportXmlViewer::GetVerticalPixelsPerCentimeter()
-{
-	qreal dotsPerCM = height();
-	dotsPerCM = 10.0 * dotsPerCM / heightMM();
-	return dotsPerCM;
+    if (reader.GetScreenWidthMM() == 0 || reader.GetScreenHeightMM() == 0)
+    {
+        QMessageBox msgBox(QMessageBox::Warning, 
+            "Display Information", 
+            "Read display information failed",
+            QMessageBox::Ok, 
+            this);
+        msgBox.exec();
+    }
+    else
+    {
+        horDotsPerCM = 10.0 * reader.GetScreenWidth() / reader.GetScreenWidthMM();
+        verDotsPerCM = 10.0 * reader.GetScreenHeight() / reader.GetScreenHeightMM();
+
+        if (reader.HasMultiScreen())
+        {
+            QMessageBox msgBox(QMessageBox::Information, "Display Information",
+                QString("This computer has multi-screen. For 1mV ECG wave draw 1cm.\n Please use this display:\n\n\tManufacture: %1\n\tSceen size: %2mm * %3mm\n\tResolution: %4 * %5")
+                .arg(strManufacture)
+                .arg(reader.GetScreenWidthMM())
+                .arg(reader.GetScreenHeightMM())
+                .arg(reader.GetScreenWidth())
+                .arg(reader.GetScreenHeight()),
+                QMessageBox::Ok, this);
+            msgBox.exec();
+        }
+        else
+        {
+            QMessageBox msgBox(QMessageBox::Information, "Display Information",
+                QString("This PC has only one screen. Display information:\n\n\tManufacture: %1\n\tSceen size: %2mm * %3mm\n\tResolution: %4 * %5")
+                .arg(strManufacture)
+                .arg(reader.GetScreenWidthMM())
+                .arg(reader.GetScreenHeightMM())
+                .arg(reader.GetScreenWidth())
+                .arg(reader.GetScreenHeight()),
+                QMessageBox::Ok, this);
+            msgBox.exec();
+        }
+    }
+#else
+	horDotsPerCM = width();
+	horDotsPerCM = 10.0 * horDotsPerCM / widthMM();
+
+    verDotsPerCM = height();
+    verDotsPerCM = 10.0 * VerDotsPerCM / heightMM();
+#endif
+
+    //更新配置值,需要放在InitDialog的前面
+    m_pCfgMgr->UpdateConfig(ID_HOR_PIXELS_PER_CM, horDotsPerCM);
+    m_pCfgMgr->UpdateConfig(ID_VER_PIXELS_PER_CM, verDotsPerCM);
 }

@@ -16,6 +16,7 @@ HEADERS += ./renderarea.h \
     ./qexportxmlviewer.h \
     ./qwaveinfodlg.h \
     ./qdisplaysettingdlg.h \
+    ./edidreader.h \
     ./cfgmgr.h \
     ./cfgid.h \
     ./qexportxmlstruct.h
@@ -29,9 +30,9 @@ SOURCES += ./renderarea.cpp \
     ./qexportxmlviewer.cpp \
     ./qwaveinfodlg.cpp \
     ./qdisplaysettingdlg.cpp \
+    ./edidreader.cpp \
     ./cfgmgr.cpp
 FORMS += ./ui/qexportxmlviewer.ui \
     ./ui/qwaveinfodlg.ui \
     ./ui/qdisplaysettingdlg.ui
 RESOURCES += ui/qexportxmlviewer.qrc
-RC_FILE += ui/exportxmlviewer.rc

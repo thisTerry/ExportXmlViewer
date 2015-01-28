@@ -1,5 +1,5 @@
 ﻿#include "qexportxmlviewer.h"
-#include <QtGui/QApplication>
+#include <QtWidgets/QApplication>
 #include "CFGMgr.h"
 
 static const QString ORG_NAME      =  "Mindray";
