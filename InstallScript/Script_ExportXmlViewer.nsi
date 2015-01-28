@@ -35,9 +35,13 @@ Section "ExportXmlViewer" Section1
 
 	; Set Section Files and Shortcuts
 	SetOutPath "$INSTDIR\"
-	File "..\release\QtCore4.dll"
-	File "..\release\QtGui4.dll"
-	File "..\release\QtXml4.dll"
+	File "..\release\icudt52.dll"
+	File "..\release\icuin52.dll"
+	File "..\release\icuuc52.dll"
+	File "..\release\Qt5Core.dll"
+	File "..\release\Qt5Gui.dll"
+	File "..\release\Qt5Widgets.dll"
+	File "..\release\Qt5Xml.dll"
 	File "..\release\ExportXmlViewer.exe"
 	CreateShortCut "$DESKTOP\ExportXmlViewer.lnk" "$INSTDIR\ExportXmlViewer.exe"
 	CreateDirectory "$SMPROGRAMS\ExportXmlViewer"
@@ -76,9 +80,13 @@ Section Uninstall
 	Delete "$SMPROGRAMS\ExportXmlViewer\Uninstall.lnk"
 
 	; Clean up ExportXmlViewer
-	Delete "$INSTDIR\QtCore4.dll"
-	Delete "$INSTDIR\QtGui4.dll"
-	Delete "$INSTDIR\QtXml4.dll"
+	Delete "$INSTDIR\icudt52.dll"
+	Delete "$INSTDIR\icuin52.dll"
+	Delete "$INSTDIR\icuuc52.dll"
+	Delete "$INSTDIR\Qt5Core.dll"
+	Delete "$INSTDIR\Qt5Gui.dll"
+	Delete "$INSTDIR\Qt5Widgets.dll"
+	Delete "$INSTDIR\Qt5Xml.dll"
 	Delete "$INSTDIR\ExportXmlViewer.exe"
 
 	; Remove remaining directories
