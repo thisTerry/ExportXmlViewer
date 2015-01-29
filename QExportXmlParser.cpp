@@ -38,7 +38,7 @@ void QExportXmlParser::Clear()
 
 template <typename T> void QExportXmlParser::Clear(QVector<T*> & vecItems)
 {
-	for (QVector<T*>::iterator it=vecItems.begin(); it!=vecItems.end(); it++)
+	for (typename QVector<T*>::iterator it=vecItems.begin(); it!=vecItems.end(); it++)
 	{
 		T* p = *it;
 		if (NULL != p)

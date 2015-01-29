@@ -14,7 +14,7 @@ public:
 	QParameterListWidget(QWidget* parent);
 	~QParameterListWidget();
 
-	void QParameterListWidget::FillObservations(const QVector<STUObservation*>& observations);
+	void FillObservations(const QVector<STUObservation*>& observations);
 
 public:
 	virtual QSize sizeHint() const;

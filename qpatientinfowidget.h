@@ -22,7 +22,7 @@ public:
 	QPatientInfoWidget(QWidget* parent);
 	~QPatientInfoWidget();
 
-	void QPatientInfoWidget::FillPatient(const STUPatient* patientPtr);
+	void FillPatient(const STUPatient* patientPtr);
 
 public:
 	virtual QSize sizeHint() const;

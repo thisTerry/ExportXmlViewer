@@ -1,4 +1,4 @@
-﻿#include "QParameterListWidget.h"
+﻿#include "qparameterlistwidget.h"
 #include "qexportxmlstruct.h"
 #include <QHeaderView>
 

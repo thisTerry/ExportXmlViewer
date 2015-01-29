@@ -11,7 +11,7 @@
 #include "CFGMgr.h"
 #include <QFileInfo>
 #include "qwaveswidget.h"
-#include "QParameterListWidget.h"
+#include "qparameterlistwidget.h"
 #include "qpatientinfowidget.h"
 #ifdef Q_OS_WIN
 #include "edidreader.h"

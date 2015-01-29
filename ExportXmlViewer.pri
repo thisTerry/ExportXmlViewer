@@ -7,37 +7,35 @@
 message("You are running qmake on a generated .pro file. This may not work!")
 
 
-HEADERS += ./renderarea.h \
+HEADERS += ./RenderArea.h \
     ./qwaveswidget.h \
     ./qparameterlistwidget.h \
     ./qpatientinfowidget.h \
     ./scalecalculator.h \
-    ./qexportxmlparser.h \
-    ./qexportxmlviewer.h \
+    ./QExportXmlParser.h \
+    ./QExportXmlViewer.h \
     ./qwaveinfodlg.h \
-    ./qdisplaysettingdlg.h \
-    ./edidreader.h \
-    ./cfgmgr.h \
+    ./QDisplaySettingDlg.h \
+    ./CFGMgr.h \
     ./cfgid.h \
     ./qexportxmlstruct.h
-SOURCES += ./renderarea.cpp \
+SOURCES += ./RenderArea.cpp \
     ./qwaveswidget.cpp \
     ./qparameterlistwidget.cpp \
     ./qpatientinfowidget.cpp \
     ./scalecalculator.cpp \
     ./main.cpp \
-    ./qexportxmlparser.cpp \
-    ./qexportxmlviewer.cpp \
+    ./QExportXmlParser.cpp \
+    ./QExportXmlViewer.cpp \
     ./qwaveinfodlg.cpp \
-    ./qdisplaysettingdlg.cpp \
-    ./edidreader.cpp \
-    ./cfgmgr.cpp
+    ./QDisplaySettingDlg.cpp \
+    ./CFGMgr.cpp
 FORMS += ./ui/qexportxmlviewer.ui \
     ./ui/qwaveinfodlg.ui \
     ./ui/qdisplaysettingdlg.ui
 RESOURCES += ui/qexportxmlviewer.qrc
 win32{
-    HEADERS += ./edidreader.h
-    SOURCES += ./edidreader.cpp
+    HEADERS += ./EDIDReader.h
+    SOURCES += ./EDIDReader.cpp
     RC_FILE = ui/exportxmlviewer.rc
 }
