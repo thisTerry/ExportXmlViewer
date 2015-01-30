@@ -24,7 +24,7 @@ namespace psimpl
 	void ScaleCalculator::SetWaveMinMaxValue(const QString& waveName, qreal dbMinValue, qreal dbMaxValue)
 	{
 		qDebug("Items in list: %d\n", m_mapScaleData.size());
-		qDebug("Items QStringName: %s, iMin =%d, iMax=%d\n ", qPrintable(waveName), dbMinValue, dbMaxValue);
+        qDebug("Items QStringName: %s, iMin =%f, iMax=%f\n ", qPrintable(waveName), dbMinValue, dbMaxValue);
 		
 		if (!waveName.isEmpty())
 		{
@@ -44,7 +44,7 @@ namespace psimpl
 					pValue->dbMaxValue = dbMaxValue;
 				}
 
-				qDebug("#map:  QStringName: %s, iMin =%d, iMax=%d \n", qPrintable(waveNameHash), pValue->dbMinValue, pValue->dbMaxValue);
+                qDebug("#map:  QStringName: %s, iMin =%f, iMax=%f \n", qPrintable(waveNameHash), pValue->dbMinValue, pValue->dbMaxValue);
 			}
 			else
 			{
@@ -52,7 +52,7 @@ namespace psimpl
 				pValue->dbMinValue = dbMinValue;
 				pValue->dbMaxValue = dbMaxValue;
 				m_mapScaleData.insert(waveNameHash, pValue);
-				qDebug("#map:  QStringName: %s, iMin =%d, iMax=%d \n", qPrintable(waveNameHash), pValue->dbMinValue, pValue->dbMaxValue);
+                qDebug("#map:  QStringName: %s, iMin =%f, iMax=%f \n", qPrintable(waveNameHash), pValue->dbMinValue, pValue->dbMaxValue);
 			}
 		}
 		else
