@@ -13,7 +13,7 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp\
-        QExportXmlViewer.cpp \
+    QExportXmlViewer.cpp \
     CFGMgr.cpp \
     QDisplaySettingDlg.cpp \
     QExportXmlParser.cpp \
@@ -56,3 +56,9 @@ DISTFILES += \
 
 RESOURCES += \
     ui/qexportxmlviewer.qrc
+
+win32{
+RC_FILE += ui/exportxmlviewer.rc
+SOURCES += EDIDReader.cpp
+HEADERS += EDIDReader.h 
+}
