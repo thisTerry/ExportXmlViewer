@@ -1,4 +1,4 @@
-﻿#include "QPatientInfoWidget.h"
+﻿#include "qpatientinfowidget.h"
 #include "qexportxmlstruct.h"
 #include <QBrush>
 #include "qexportxmltagname.h"

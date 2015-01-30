@@ -1,4 +1,4 @@
-﻿#include "qexportxmlviewer.h"
+#include "QExportXmlViewer.h"
 #include <QtWidgets/QApplication>
 #include "CFGMgr.h"
 

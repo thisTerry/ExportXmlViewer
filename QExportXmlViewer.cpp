@@ -7,7 +7,7 @@
 #include "QExportXmlParser.h"
 #include "qexportxmlstruct.h"
 #include "qwaveinfodlg.h"
-#include "qdisplaysettingdlg.h"
+#include "QDisplaySettingDlg.h"
 #include "CFGMgr.h"
 #include <QFileInfo>
 #include "qwaveswidget.h"
@@ -540,7 +540,7 @@ void QExportXmlViewer::UpdateDisplayPixelsPerCM()
 	horDotsPerCM = 10.0 * horDotsPerCM / widthMM();
 
     verDotsPerCM = height();
-    verDotsPerCM = 10.0 * VerDotsPerCM / heightMM();
+    verDotsPerCM = 10.0 * verDotsPerCM / heightMM();
 #endif
 
     //更新配置值,需要放在InitDialog的前面

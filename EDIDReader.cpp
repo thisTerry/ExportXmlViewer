@@ -1,4 +1,4 @@
-﻿#include "edidreader.h"
+﻿#include "EDIDReader.h"
 #include <QSettings>
 
 /*
